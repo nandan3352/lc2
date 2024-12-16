@@ -19,10 +19,6 @@ mongoose
   const __dirname = path.resolve();
   
 const app = express();
-app.use(express.static(path.join(__dirname, 'frontend', 'build')));
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'frontend', 'build', 'index.html'));
-});
 
 app.use(express.json());
 app.use(cors())
@@ -34,13 +30,3 @@ app.listen(3500, () => {
 });
 
 app.use('/api/auth', authRoutes);
-
-app.use((err, req, res, next) => {
-  const statusCode = err.statusCode || 500;
-  const message = err.message || 'Internal Server Error';
-  return res.status(statusCode).json({
-    success: false,
-    message,
-    statusCode,
-  });
-});
