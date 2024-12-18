@@ -8,6 +8,7 @@ import cors from "cors"
 
 dotenv.config();
 
+const app = express();
 mongoose
   .connect(process.env.MONGO)
   .then(() => {
@@ -16,25 +17,24 @@ mongoose
   .catch((err) => {
     console.log(err);
   });
-  const __dirname = path.resolve();
-  
-const app = express();
-app.use(express.static(path.join(__dirname, 'frontend', 'public')));
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'frontend', 'public', 'index.html'));
-});
-
+ 
 app.use(express.json());
 app.use(cors())
 app.use(cookieParser());
+
+
+app.use('/api/auth', authRoutes);
+const __dirname = path.resolve();
+  
+app.use(express.static(path.join(__dirname, '/frontend/build')));
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'frontend', 'build', 'index.html'));
+});
 
 app.listen(3500, () => {
   console.log('Server listening on port 3500');
   console.log(__dirname)
 });
-
-app.use('/api/auth', authRoutes);
-
 app.use((err, req, res, next) => {
   const statusCode = err.statusCode || 500;
   const message = err.message || 'Internal Server Error';
